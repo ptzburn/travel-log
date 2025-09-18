@@ -1,13 +1,15 @@
 import { TbBrandGithub, TbLogout2 } from "@preact-icons/tb";
-import { authState } from "@/lib/auth-client.ts";
 import { User } from "@/utils.ts";
+import { isLoading, signIn } from "@/lib/auth-client.ts";
 
-function AuthButton({ user }: { user: User | null }) {
-  const isLoading = authState.isLoading.value;
+interface AuthButtonProps {
+  user: User | null;
+}
 
+function AuthButton({ user }: AuthButtonProps) {
   return (
     <>
-      {!isLoading && user
+      {!isLoading.value && user
         ? (
           <div class="dropdown dropdown-end">
             <div tabIndex={0} role="button" class="btn m-1">
@@ -38,11 +40,11 @@ function AuthButton({ user }: { user: User | null }) {
           <button
             type="button"
             class="btn btn-accent"
-            onClick={authState.signIn}
-            disabled={isLoading}
+            onClick={signIn}
+            disabled={isLoading.value}
           >
             Sign in with GitHub
-            {isLoading && (
+            {isLoading.value && (
               <span class="loading loading-spinner loading-md">
               </span>
             )}

@@ -9,7 +9,7 @@
     "db:generate:migration": "deno -A npm:drizzle-kit generate",
     "db:migrate": "deno -A npm:drizzle-kit migrate",
     "db:studio": "deno -A npm:drizzle-kit studio",
-    "start": "deno serve -A _fresh/server.js",
+    "start": "deno serve -A --env-file _fresh/server.js",
     "update": "deno run -A -r jsr:@fresh/update .",
     "deploy": "deployctl deploy --project=ptzburn-travel-log --entrypoint=./_fresh/server.js",
     "preview": "deno run -A main.ts"

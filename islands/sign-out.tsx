@@ -1,9 +1,9 @@
 import { useEffect } from "preact/hooks";
-import { authState } from "@/lib/auth-client.ts";
+import { signOut } from "@/lib/auth-client.ts";
 
 export default function SignOut() {
   useEffect(() => {
-    authState.signOut();
+    signOut();
   }, []);
 
   return (

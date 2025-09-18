@@ -1,5 +1,5 @@
 import { define } from "@/utils.ts";
-import CTALanding from "@/islands/cta-landing.tsx";
+import AuthButton from "@/islands/auth-button.tsx";
 
 export default define.page(function Home({ state }) {
   return (
@@ -12,7 +12,9 @@ export default define.page(function Home({ state }) {
             log app. Add locations, photos, and notes to create a digital
             journal of your journeys.
           </p>
-          <CTALanding user={state.user} />
+          {state.user
+            ? <a class="btn btn-primary" href="/dashboard">Start Logging</a>
+            : <AuthButton user={state.user} />}
         </div>
       </div>
     </div>
