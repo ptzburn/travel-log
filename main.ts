@@ -7,13 +7,12 @@ import { auth } from "@/lib/auth.ts";
 import { authMiddleware } from "@/middlewares/auth.middleware.ts";
 
 export const app = new App<State>()
+  .use(authMiddleware)
   .layout("*", DefaultLayout)
   .all("/api/auth/*", (ctx: Context<State>) => {
     return auth.handler(ctx.req);
   })
   .use(trailingSlashes("never"))
-  .use(staticFiles())
   .use(logger)
-  .use(authMiddleware)
-  // Include file-system based routes here
+  .use(staticFiles())
   .fsRoutes();
