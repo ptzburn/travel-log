@@ -1,19 +1,13 @@
 import { define } from "@/utils.ts";
-import { InsertLocationSchema, location } from "@/lib/db/schema/location.ts";
+import { InsertLocationSchema } from "@/lib/db/schema/location.ts";
 import { ZodError } from "zod";
 import UnsavedChanges from "./(_islands)/unsaved-changes.tsx";
 import CancelLocationButton from "./(_islands)/cancel-location-button.tsx";
 import AddLocationButton from "./(_islands)/add-location-button.tsx";
 import { isLoading } from "@/utils.ts";
-import db from "@/lib/db/db.ts";
 import slugify from "slug";
-import { and, eq } from "drizzle-orm";
-import { customAlphabet } from "nanoid";
-
-const nanoid = customAlphabet(
-  "1234567890abcdefghijklmnopqrstuvwxyz",
-  5,
-);
+import { findUniqueSlug, insertLocation } from "@/lib/db/queries/location.ts";
+import { findLocationByName } from "@/lib/db/queries/location.ts";
 
 interface HandlerData {
   message: string;
@@ -50,12 +44,10 @@ export const handler = define.handlers({
 
       const validatedData = InsertLocationSchema.parse(formData);
 
-      const existingLocation = await db.query.location.findFirst({
-        where: and(
-          eq(location.name, validatedData.name),
-          eq(location.userId, Number(ctx.state.user?.id)),
-        ),
-      });
+      const existingLocation = await findLocationByName(
+        validatedData,
+        Number(ctx.state.user?.id),
+      );
 
       if (existingLocation) {
         return {
@@ -67,28 +59,13 @@ export const handler = define.handlers({
         };
       }
 
-      let slug = slugify(validatedData.name);
-      let existing = !!(await db.query.location.findFirst({
-        where: eq(location.slug, slug),
-      }));
+      const slug = await findUniqueSlug(slugify(validatedData.name));
 
-      while (existing) {
-        const id = nanoid();
-        const idSlug = `${slug}-${id}`;
-        existing = !!(await db.query.location.findFirst({
-          where: eq(location.slug, idSlug),
-        }));
-        if (!existing) {
-          slug = idSlug;
-          break;
-        }
-      }
-
-      const [created] = await db.insert(location).values({
-        ...validatedData,
-        userId: Number(ctx.state.user?.id),
-        slug: slug,
-      }).returning();
+      const created = await insertLocation(
+        validatedData,
+        Number(ctx.state.user?.id),
+        slug,
+      );
 
       console.log(created);
 
