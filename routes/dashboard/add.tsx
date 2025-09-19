@@ -6,6 +6,14 @@ import CancelLocationButton from "./(_islands)/cancel-location-button.tsx";
 import AddLocationButton from "./(_islands)/add-location-button.tsx";
 import { isLoading } from "@/utils.ts";
 import db from "@/lib/db/db.ts";
+import slugify from "slug";
+import { and, eq } from "drizzle-orm";
+import { customAlphabet } from "nanoid";
+
+const nanoid = customAlphabet(
+  "1234567890abcdefghijklmnopqrstuvwxyz",
+  5,
+);
 
 interface HandlerData {
   message: string;
@@ -26,7 +34,6 @@ export const handler = define.handlers({
       });
     }
 
-    await new Promise((resolve) => setTimeout(resolve, 5000));
     const form = await ctx.req.formData();
 
     try {
@@ -43,10 +50,44 @@ export const handler = define.handlers({
 
       const validatedData = InsertLocationSchema.parse(formData);
 
+      const existingLocation = await db.query.location.findFirst({
+        where: and(
+          eq(location.name, validatedData.name),
+          eq(location.userId, Number(ctx.state.user?.id)),
+        ),
+      });
+
+      if (existingLocation) {
+        return {
+          data: {
+            message: "A location with this name already exists",
+            errors: [],
+          },
+          status: 409,
+        };
+      }
+
+      let slug = slugify(validatedData.name);
+      let existing = !!(await db.query.location.findFirst({
+        where: eq(location.slug, slug),
+      }));
+
+      while (existing) {
+        const id = nanoid();
+        const idSlug = `${slug}-${id}`;
+        existing = !!(await db.query.location.findFirst({
+          where: eq(location.slug, idSlug),
+        }));
+        if (!existing) {
+          slug = idSlug;
+          break;
+        }
+      }
+
       const [created] = await db.insert(location).values({
         ...validatedData,
         userId: Number(ctx.state.user?.id),
-        slug: validatedData.name.replaceAll(" ", "-").toLowerCase(),
+        slug: slug,
       }).returning();
 
       console.log(created);
@@ -74,6 +115,20 @@ export const handler = define.handlers({
       }
 
       if (error instanceof Error) {
+        if (
+          error.cause?.toString().includes(
+            "UNIQUE constraint failed",
+          )
+        ) {
+          return {
+            data: {
+              message:
+                "Slug must be unique (the location name is used to generate the slug)",
+              errors: [],
+            },
+            status: 409,
+          };
+        }
         return {
           data: {
             message: error.message,

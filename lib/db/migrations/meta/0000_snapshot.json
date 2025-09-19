@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "5aebdd43-ae8e-4292-a7d3-5946f40269cc",
+  "id": "ca85612e-6f1d-463b-96fb-7e3faf0d3754",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "location": {
@@ -76,6 +76,14 @@
           "name": "location_slug_unique",
           "columns": [
             "slug"
+          ],
+          "isUnique": true
+        },
+        "location_name_userId_unique": {
+          "name": "location_name_userId_unique",
+          "columns": [
+            "name",
+            "user_id"
           ],
           "isUnique": true
         }
