@@ -1,4 +1,4 @@
-import { App, type Context, staticFiles } from "fresh";
+import { App, type Context, csrf, staticFiles } from "fresh";
 import type { State } from "@/utils.ts";
 import { trailingSlashes } from "fresh";
 import { logger } from "@/middlewares/logger.ts";
@@ -7,6 +7,7 @@ import { auth } from "@/lib/auth.ts";
 import { authMiddleware } from "@/middlewares/auth.middleware.ts";
 
 export const app = new App<State>()
+  .use(csrf())
   .use(authMiddleware)
   .layout("*", DefaultLayout)
   .all("/api/auth/*", (ctx: Context<State>) => {

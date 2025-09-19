@@ -1,7 +1,11 @@
 import { define } from "@/utils.ts";
-import { TbArrowLeft, TbCirclePlusFilled } from "@preact-icons/tb";
-import { InsertLocationSchema } from "@/lib/db/schema/location.ts";
+import { InsertLocationSchema, location } from "@/lib/db/schema/location.ts";
 import { ZodError } from "zod";
+import UnsavedChanges from "./(_islands)/unsaved-changes.tsx";
+import CancelLocationButton from "./(_islands)/cancel-location-button.tsx";
+import AddLocationButton from "./(_islands)/add-location-button.tsx";
+import { isLoading } from "@/utils.ts";
+import db from "@/lib/db/db.ts";
 
 interface HandlerData {
   message: string;
@@ -13,6 +17,16 @@ export const handler = define.handlers({
     return { data: { message: "", errors: [] } as HandlerData };
   },
   async POST(ctx) {
+    if (!ctx.state.user) {
+      const headers = new Headers();
+      headers.set("location", "/");
+      return new Response(null, {
+        status: 401, // Unauthorized
+        headers,
+      });
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, 5000));
     const form = await ctx.req.formData();
 
     try {
@@ -29,20 +43,20 @@ export const handler = define.handlers({
 
       const validatedData = InsertLocationSchema.parse(formData);
 
-      // Process the validated data
-      console.log("Creating location:", validatedData);
+      const [created] = await db.insert(location).values({
+        ...validatedData,
+        userId: Number(ctx.state.user?.id),
+        slug: validatedData.name.replaceAll(" ", "-").toLowerCase(),
+      }).returning();
 
-      // TODO: Add user ID and slug generation
-      // const user = await getCurrentUser(ctx);
-      // const slug = generateSlug(validatedData.name);
-      // const locationData = { ...validatedData, userId: user.id, slug };
+      console.log(created);
 
-      // TODO: Save to database
-      // await db.insert(location).values(locationData);
-
+      // Redirect user to dashboard.
+      const headers = new Headers();
+      headers.set("location", "/dashboard");
       return new Response(null, {
-        status: 303,
-        headers: { location: "/dashboard" },
+        status: 303, // See Other
+        headers,
       });
     } catch (error) {
       if (error instanceof ZodError) {
@@ -55,12 +69,26 @@ export const handler = define.handlers({
               message: issue.message,
             })),
           },
+          status: 422,
         };
       }
 
-      console.error("Unexpected error:", error);
+      if (error instanceof Error) {
+        return {
+          data: {
+            message: error.message,
+            errors: [],
+          },
+          status: 500,
+        };
+      }
+
       return {
-        data: { message: "Internal server error", errors: [] } as HandlerData,
+        data: {
+          message: "Internal server error",
+          errors: [],
+        },
+        status: 500,
       };
     }
   },
@@ -69,6 +97,7 @@ export const handler = define.handlers({
 export default define.page<typeof handler>(function Add({ data }) {
   return (
     <div class="container max-w-md mx-auto mt-4">
+      <UnsavedChanges />
       <div class="my-4">
         <h1 class="text-lg">Add Location</h1>
         <p class="text-sm">
@@ -77,12 +106,37 @@ export default define.page<typeof handler>(function Add({ data }) {
           times you visited this location after adding it.
         </p>
       </div>
-      <form method="post" class="flex flex-col gap-2" autocomplete="off">
+      {data.message && data.errors.length === 0 && (
+        <div role="alert" class="alert alert-error">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6 shrink-0 stroke-current"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+          <span>{data.message}</span>
+        </div>
+      )}
+      <form
+        method="post"
+        class="flex flex-col gap-2"
+        autocomplete="off"
+        f-client-nav={false}
+        id="add-location-form"
+      >
         <fieldset class="fieldset">
           <legend class="fieldset-legend">Name</legend>
           <input
             name="name"
             type="text"
+            disabled={isLoading.peek()}
             minlength={1}
             maxlength={100}
             required
@@ -103,6 +157,7 @@ export default define.page<typeof handler>(function Add({ data }) {
           <legend class="fieldset-legend">Description</legend>
           <textarea
             name="description"
+            disabled={isLoading.peek()}
             maxlength={1000}
             class={`textarea w-full ${
               data.errors.find((e) => e.field === "description")
@@ -124,6 +179,7 @@ export default define.page<typeof handler>(function Add({ data }) {
             type="number"
             min="-90"
             max="90"
+            disabled={isLoading.peek()}
             required
             class={`input w-full ${
               data.errors.find((e) => e.field === "lat")
@@ -145,6 +201,7 @@ export default define.page<typeof handler>(function Add({ data }) {
             type="number"
             min="-180"
             max="180"
+            disabled={isLoading.peek()}
             required
             class={`input w-full ${
               data.errors.find((e) => e.field === "long")
@@ -161,14 +218,8 @@ export default define.page<typeof handler>(function Add({ data }) {
           <p class="validator-hint">Must be between -180 and 180</p>
         </fieldset>
         <div class="flex justify-end gap-2">
-          <button type="button" class="btn btn-outline">
-            <TbArrowLeft size={24} />
-            Cancel
-          </button>
-          <button type="submit" class="btn btn-primary">
-            Add
-            <TbCirclePlusFilled size={24} />
-          </button>
+          <CancelLocationButton />
+          <AddLocationButton />
         </div>
       </form>
     </div>

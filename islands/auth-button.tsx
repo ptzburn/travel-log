@@ -41,7 +41,7 @@ function AuthButton({ user }: AuthButtonProps) {
             type="button"
             class="btn btn-accent"
             onClick={signIn}
-            disabled={isLoading.value}
+            disabled={isLoading}
           >
             Sign in with GitHub
             {isLoading.value && (
