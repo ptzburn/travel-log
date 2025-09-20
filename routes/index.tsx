@@ -13,7 +13,14 @@ export default define.page(function Home({ state }) {
             journal of your journeys.
           </p>
           {state.user
-            ? <a class="btn btn-primary" href="/dashboard">Start Logging</a>
+            ? (
+              <a
+                class="btn btn-primary"
+                href="/dashboard"
+              >
+                Start Logging
+              </a>
+            )
             : <AuthButton user={state.user} />}
         </div>
       </div>

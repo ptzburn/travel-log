@@ -36,7 +36,7 @@
     "drizzle-kit": "npm:drizzle-kit@^0.31.4",
     "drizzle-orm": "npm:drizzle-orm@^0.44.5",
     "drizzle-zod": "npm:drizzle-zod@^0.8.3",
-    "fresh": "jsr:@fresh/core@^2.1.0",
+    "fresh": "jsr:@fresh/core@^2.1.1",
     "nanoid": "npm:nanoid@^5.1.5",
     "preact": "npm:preact@^10.27.2",
     "@preact/signals": "npm:@preact/signals@^2.3.1",

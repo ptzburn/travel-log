@@ -5,7 +5,7 @@ import {
   TbLogout2,
   TbMap,
 } from "@preact-icons/tb";
-import SidebarButton from "@/components/sidebar-button.tsx";
+import SidebarButton from "../(_components)/sidebar-button.tsx";
 import { useSignal } from "@preact/signals";
 
 interface SidebarProps {
@@ -25,7 +25,7 @@ function Sidebar({ currentPath }: SidebarProps) {
   }
 
   return (
-    <div
+    <aside
       class={`bg-base-100 transition-all duration-300 ${
         isSidebarOpen.value ? "w-64" : "w-16"
       }`}
@@ -65,7 +65,7 @@ function Sidebar({ currentPath }: SidebarProps) {
           showLabel={isSidebarOpen.value}
         />
       </div>
-    </div>
+    </aside>
   );
 }
 
