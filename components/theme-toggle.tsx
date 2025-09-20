@@ -4,7 +4,12 @@ function ThemeToggle() {
   return (
     <label class="swap swap-rotate mx-4">
       {/* this hidden checkbox controls the state */}
-      <input type="checkbox" class="theme-controller" value="light" />
+      <input
+        id="theme-toggle"
+        type="checkbox"
+        class="theme-controller"
+        value="light"
+      />
 
       {/* sun icon */}
       <i id="theme-light" class="swap-off">
