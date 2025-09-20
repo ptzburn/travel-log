@@ -3,7 +3,8 @@ import { TbArrowLeft } from "@preact-icons/tb";
 
 export const handler = define.handlers({
   GET(ctx) {
-    const error = ctx.url.searchParams.get("error") || "Unknown error";
+    const error = ctx.url.searchParams.get("error") || String(ctx.error) ||
+      "Unknown error";
     return { data: { error } };
   },
 });

@@ -7,21 +7,33 @@ import {
 } from "@preact-icons/tb";
 import SidebarButton from "../(_components)/sidebar-button.tsx";
 import { useSignal } from "@preact/signals";
+import { useEffect } from "preact/hooks";
 
 interface SidebarProps {
   currentPath: string;
 }
 
 function Sidebar({ currentPath }: SidebarProps) {
-  const isSidebarOpen = useSignal(
-    localStorage.getItem("isSidebarOpen")
-      ? JSON.parse(localStorage.getItem("isSidebarOpen")!)
-      : true,
-  );
+  const isSidebarOpen = useSignal(true);
+
+  // Initialize from localStorage only on client-side
+  useEffect(() => {
+    if (typeof localStorage !== "undefined") {
+      const stored = localStorage.getItem("isSidebarOpen");
+      if (stored !== null) {
+        isSidebarOpen.value = JSON.parse(stored);
+      }
+    }
+  }, []);
 
   function toggleSidebar() {
     isSidebarOpen.value = !isSidebarOpen.value;
-    localStorage.setItem("isSidebarOpen", isSidebarOpen.value.toString());
+    if (typeof localStorage !== "undefined") {
+      localStorage.setItem(
+        "isSidebarOpen",
+        isSidebarOpen.value.toString(),
+      );
+    }
   }
 
   return (
