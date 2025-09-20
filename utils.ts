@@ -7,9 +7,15 @@ import { signal } from "@preact/signals";
 export type User = typeof auth.$Infer.Session.user;
 export type Session = typeof auth.$Infer.Session.session;
 
+export interface SideBarItem {
+  label: string;
+  href: string;
+}
+
 export interface State {
   user: User | null;
   session: Session | null;
+  sideBarItems: SideBarItem[] | undefined;
 }
 
 export const define = createDefine<State>();

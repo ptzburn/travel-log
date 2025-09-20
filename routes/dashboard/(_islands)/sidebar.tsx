@@ -4,16 +4,20 @@ import {
   TbCirclePlusFilled,
   TbLogout2,
   TbMap,
+  TbMapPinFilled,
 } from "@preact-icons/tb";
 import SidebarButton from "../(_components)/sidebar-button.tsx";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
+import { SideBarItem } from "@/utils.ts";
+import { sideBarLocations } from "@/signals/sidebar.ts";
 
 interface SidebarProps {
   currentPath: string;
+  sideBarItems: SideBarItem[] | undefined;
 }
 
-function Sidebar({ currentPath }: SidebarProps) {
+function Sidebar({ currentPath, sideBarItems }: SidebarProps) {
   const isSidebarOpen = useSignal(true);
 
   // Initialize from localStorage only on client-side
@@ -25,6 +29,11 @@ function Sidebar({ currentPath }: SidebarProps) {
       }
     }
   }, []);
+
+  // Update sideBarLocations when sideBarItems prop changes
+  useEffect(() => {
+    sideBarLocations.value = sideBarItems ?? sideBarLocations.value;
+  }, [sideBarItems]);
 
   function toggleSidebar() {
     isSidebarOpen.value = !isSidebarOpen.value;
@@ -68,6 +77,29 @@ function Sidebar({ currentPath }: SidebarProps) {
           currentPath={currentPath}
           showLabel={isSidebarOpen.value}
         />
+        <div
+          class={`transition-all duration-300 overflow-hidden flex flex-col ${
+            sideBarLocations.value.length > 0
+              ? "max-h-96 opacity-100"
+              : "max-h-0 opacity-0"
+          }`}
+        >
+          {sideBarLocations.value.length > 0 && (
+            <>
+              <div class="divider" />
+              {sideBarLocations.value.map((item, index) => (
+                <SidebarButton
+                  key={index}
+                  label={item.label}
+                  icon={<TbMapPinFilled size={24} />}
+                  href={item.href}
+                  currentPath={currentPath}
+                  showLabel={isSidebarOpen.value}
+                />
+              ))}
+            </>
+          )}
+        </div>
         <div class="divider" />
         <SidebarButton
           label="Sign Out"

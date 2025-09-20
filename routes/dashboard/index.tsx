@@ -5,6 +5,10 @@ import { findLocations } from "@/lib/db/queries/location.ts";
 export const handler = define.handlers({
   async GET(ctx) {
     const locations = await findLocations(Number(ctx.state.user!.id));
+    ctx.state.sideBarItems = locations.map((location) => ({
+      label: location.name,
+      href: "#",
+    }));
     return { data: { locations }, status: 200 };
   },
 });
