@@ -1,28 +1,14 @@
 import { define } from "@/utils.ts";
 import { TbCirclePlusFilled } from "@preact-icons/tb";
-import { SelectLocation } from "@/lib/db/schema/location.ts";
-import { findLocations } from "@/lib/db/queries/location.ts";
 
-export const handler = define.handlers({
-  async GET(ctx) {
-    let locations: SelectLocation[] = [];
-    if (ctx.state.locations) {
-      locations = ctx.state.locations;
-    } else {
-      locations = await findLocations(Number(ctx.state.user!.id));
-    }
-    return { data: { locations }, status: 200 };
-  },
-});
-
-export default define.page<typeof handler>(({ data }) => {
+export default define.page(({ state }) => {
   return (
     <div class="p-4">
       <h2 class="text-2xl">Locations</h2>
-      {data.locations.length > 0
+      {state.locations.length > 0
         ? (
           <div class="flex flex-wrap mt-4 gap-2">
-            {data.locations.map((location) => (
+            {state.locations.map((location) => (
               <div
                 class="card card-compact bg-base-300 h-40 w-72"
                 key={location.id}

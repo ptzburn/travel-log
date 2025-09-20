@@ -11,7 +11,7 @@ export type Session = typeof auth.$Infer.Session.session;
 export interface State {
   user: User | null;
   session: Session | null;
-  locations: SelectLocation[] | undefined;
+  locations: SelectLocation[];
 }
 
 export const define = createDefine<State>();
