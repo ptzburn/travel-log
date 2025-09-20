@@ -19,15 +19,6 @@ export const handler = define.handlers({
     return { data: { message: "", errors: [] } as HandlerData };
   },
   async POST(ctx) {
-    if (!ctx.state.user) {
-      const headers = new Headers();
-      headers.set("location", "/");
-      return new Response(null, {
-        status: 401, // Unauthorized
-        headers,
-      });
-    }
-
     const form = await ctx.req.formData();
 
     try {
@@ -46,7 +37,7 @@ export const handler = define.handlers({
 
       const existingLocation = await findLocationByName(
         validatedData,
-        Number(ctx.state.user?.id),
+        Number(ctx.state.user!.id),
       );
 
       if (existingLocation) {
@@ -63,7 +54,7 @@ export const handler = define.handlers({
 
       const created = await insertLocation(
         validatedData,
-        Number(ctx.state.user?.id),
+        Number(ctx.state.user!.id),
         slug,
       );
 

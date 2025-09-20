@@ -38,6 +38,7 @@
     "npm:concurrently@9.2.1": "9.2.1",
     "npm:concurrently@^9.2.1": "9.2.1",
     "npm:daisyui@^5.1.12": "5.1.12",
+    "npm:drizzle-kit@*": "0.31.4_esbuild@0.25.10",
     "npm:drizzle-kit@~0.31.4": "0.31.4_esbuild@0.25.10",
     "npm:drizzle-orm@~0.44.5": "0.44.5_@libsql+client@0.15.15_@opentelemetry+api@1.9.0",
     "npm:drizzle-zod@~0.8.3": "0.8.3_drizzle-orm@0.44.5__@libsql+client@0.15.15_zod@4.1.9_@libsql+client@0.15.15_@opentelemetry+api@1.9.0",

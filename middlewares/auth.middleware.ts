@@ -1,20 +1,24 @@
 import { define, State } from "@/utils.ts";
 import { auth } from "@/lib/auth.ts";
-import { Context } from "fresh";
+import { Context, HttpError } from "fresh";
 
 export const authMiddleware = define.middleware(async (ctx: Context<State>) => {
+  console.log(`Auth middleware: ${ctx.req.method} ${ctx.req.url}`);
+
   const session = await auth.api.getSession({ headers: ctx.req.headers });
+  console.log(`Session exists: ${!!session}`);
 
   if (!session) {
     ctx.state.user = null;
     ctx.state.session = null;
+    console.log(
+      `Checking if URL includes /dashboard: ${
+        ctx.req.url.includes("/dashboard")
+      }`,
+    );
     if (ctx.req.url.includes("/dashboard")) {
-      const headers = new Headers();
-      headers.set("location", "/");
-      return new Response(null, {
-        status: 303, // See Other
-        headers,
-      });
+      console.log("Throwing 401 Unauthorized");
+      throw new HttpError(401, "Unauthorized");
     }
     return await ctx.next();
   }

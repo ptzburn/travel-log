@@ -9,6 +9,12 @@ const nanoid = customAlphabet(
   5,
 );
 
+export async function findLocations(userId: number) {
+  return await db.query.location.findMany({
+    where: eq(location.userId, userId),
+  });
+}
+
 export async function findLocationByName(
   existing: InsertLocation,
   userId: number,
