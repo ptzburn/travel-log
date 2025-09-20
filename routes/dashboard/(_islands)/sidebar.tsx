@@ -78,7 +78,7 @@ function Sidebar({ currentPath, sideBarItems }: SidebarProps) {
           showLabel={isSidebarOpen.value}
         />
         <div
-          class={`transition-all duration-300 overflow-hidden flex flex-col ${
+          class={`transition-all duration-300 flex flex-col ${
             sideBarLocations.value.length > 0
               ? "max-h-96 opacity-100"
               : "max-h-0 opacity-0"
@@ -87,12 +87,12 @@ function Sidebar({ currentPath, sideBarItems }: SidebarProps) {
           {sideBarLocations.value.length > 0 && (
             <>
               <div class="divider" />
-              {sideBarLocations.value.map((item, index) => (
+              {sideBarLocations.value.map((item) => (
                 <SidebarButton
-                  key={index}
+                  key={item.id}
                   label={item.name}
                   icon={<TbMapPinFilled size={24} />}
-                  href="#"
+                  href={item.slug}
                   currentPath={currentPath}
                   showLabel={isSidebarOpen.value}
                 />
