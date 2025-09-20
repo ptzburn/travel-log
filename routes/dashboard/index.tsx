@@ -1,14 +1,16 @@
 import { define } from "@/utils.ts";
 import { TbCirclePlusFilled } from "@preact-icons/tb";
+import { SelectLocation } from "@/lib/db/schema/location.ts";
 import { findLocations } from "@/lib/db/queries/location.ts";
 
 export const handler = define.handlers({
   async GET(ctx) {
-    const locations = await findLocations(Number(ctx.state.user!.id));
-    ctx.state.sideBarItems = locations.map((location) => ({
-      label: location.name,
-      href: "#",
-    }));
+    let locations: SelectLocation[] = [];
+    if (ctx.state.locations) {
+      locations = ctx.state.locations;
+    } else {
+      locations = await findLocations(Number(ctx.state.user!.id));
+    }
     return { data: { locations }, status: 200 };
   },
 });

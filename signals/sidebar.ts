@@ -1,4 +1,4 @@
 import { signal } from "@preact/signals";
-import { SideBarItem } from "@/utils.ts";
+import { SelectLocation } from "@/lib/db/schema/location.ts";
 
-export const sideBarLocations = signal<SideBarItem[]>([]);
+export const sideBarLocations = signal<SelectLocation[]>([]);

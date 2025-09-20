@@ -1,6 +1,6 @@
 import { int, real, sqliteTable, text, unique } from "drizzle-orm/sqlite-core";
 import { user } from "./auth.ts";
-import { createInsertSchema } from "drizzle-zod";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import z from "zod";
 
 export const location = sqliteTable("location", {
@@ -19,6 +19,8 @@ export const location = sqliteTable("location", {
   unique().on(table.name, table.userId),
 ]);
 
+const SelectLocationSchema = createSelectSchema(location);
+
 export const InsertLocationSchema = createInsertSchema(location, {
   name: (field) => field.min(1).max(100),
   description: (field) => field.max(1000),
@@ -33,3 +35,4 @@ export const InsertLocationSchema = createInsertSchema(location, {
 });
 
 export type InsertLocation = z.infer<typeof InsertLocationSchema>;
+export type SelectLocation = z.infer<typeof SelectLocationSchema>;

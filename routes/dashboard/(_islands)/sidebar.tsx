@@ -9,12 +9,12 @@ import {
 import SidebarButton from "../(_components)/sidebar-button.tsx";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
-import { SideBarItem } from "@/utils.ts";
+import { SelectLocation } from "@/lib/db/schema/location.ts";
 import { sideBarLocations } from "@/signals/sidebar.ts";
 
 interface SidebarProps {
   currentPath: string;
-  sideBarItems: SideBarItem[] | undefined;
+  sideBarItems: SelectLocation[] | undefined;
 }
 
 function Sidebar({ currentPath, sideBarItems }: SidebarProps) {
@@ -90,9 +90,9 @@ function Sidebar({ currentPath, sideBarItems }: SidebarProps) {
               {sideBarLocations.value.map((item, index) => (
                 <SidebarButton
                   key={index}
-                  label={item.label}
+                  label={item.name}
                   icon={<TbMapPinFilled size={24} />}
-                  href={item.href}
+                  href="#"
                   currentPath={currentPath}
                   showLabel={isSidebarOpen.value}
                 />
