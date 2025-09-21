@@ -6,9 +6,11 @@ export default define.layout(({ Component, url, state }) => {
   return (
     <div class="flex-1 flex">
       <Sidebar currentPath={url.pathname} sideBarItems={state.locations} />
-      <div class="flex-1 flex flex-col">
-        <Component />
-        <Map />
+      <div class="flex-1 overflow-auto">
+        <div class="flex flex-col size-full">
+          <Component />
+          <Map />
+        </div>
       </div>
     </div>
   );

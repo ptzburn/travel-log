@@ -200,6 +200,7 @@ export default define.page<typeof handler>(function Add({ data }) {
           <input
             name="lat"
             type="number"
+            step="0.000001"
             min="-90"
             max="90"
             disabled={isLoading.peek()}
@@ -222,6 +223,7 @@ export default define.page<typeof handler>(function Add({ data }) {
           <input
             name="long"
             type="number"
+            step="0.000001"
             min="-180"
             max="180"
             disabled={isLoading.peek()}

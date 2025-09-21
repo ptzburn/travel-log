@@ -7,10 +7,10 @@ export default define.page(({ state }) => {
       <h2 class="text-2xl">Locations</h2>
       {state.locations.length > 0
         ? (
-          <div class="flex flex-wrap mt-4 gap-2">
+          <div class="flex flex-nowrap mt-4 gap-2 overflow-auto">
             {state.locations.map((location) => (
               <div
-                class="card card-compact bg-base-300 h-40 w-72"
+                class="card card-compact bg-base-300 h-40 w-72 shrink-0"
                 key={location.id}
               >
                 <div class="card-body">

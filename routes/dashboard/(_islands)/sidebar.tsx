@@ -11,6 +11,7 @@ import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { SelectLocation } from "@/lib/db/schema/location.ts";
 import { sideBarLocations } from "@/signals/sidebar.ts";
+import { mapPoints } from "@/signals/map.ts";
 
 interface SidebarProps {
   currentPath: string;
@@ -32,7 +33,15 @@ function Sidebar({ currentPath, sideBarItems }: SidebarProps) {
 
   // Update sideBarLocations when sideBarItems prop changes
   useEffect(() => {
-    sideBarLocations.value = sideBarItems ?? sideBarLocations.value;
+    if (sideBarItems) {
+      sideBarLocations.value = sideBarItems;
+      mapPoints.value = sideBarLocations.value.map((item) => ({
+        id: item.id,
+        label: item.name,
+        lat: item.lat,
+        long: item.long,
+      }));
+    }
   }, [sideBarItems]);
 
   function toggleSidebar() {
@@ -47,7 +56,7 @@ function Sidebar({ currentPath, sideBarItems }: SidebarProps) {
 
   return (
     <aside
-      class={`bg-base-100 transition-all duration-300 ${
+      class={`bg-base-100 transition-all duration-300 shrink-0 ${
         isSidebarOpen.value ? "w-64" : "w-16"
       }`}
     >
