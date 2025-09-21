@@ -1,5 +1,6 @@
 import { define } from "@/utils.ts";
 import { TbCirclePlusFilled } from "@preact-icons/tb";
+import LocationCard from "./(_islands)/location-card.tsx";
 
 export default define.page(({ state }) => {
   return (
@@ -9,15 +10,7 @@ export default define.page(({ state }) => {
         ? (
           <div class="flex flex-nowrap mt-4 gap-2 overflow-auto">
             {state.locations.map((location) => (
-              <div
-                class="card card-compact bg-base-300 h-40 w-72 shrink-0"
-                key={location.id}
-              >
-                <div class="card-body">
-                  <h3 class="card-title">{location.name}</h3>
-                  <p class="card-text">{location.description}</p>
-                </div>
-              </div>
+              <LocationCard location={location} />
             ))}
           </div>
         )

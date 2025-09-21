@@ -6,7 +6,7 @@ import {
   TbMap,
   TbMapPinFilled,
 } from "@preact-icons/tb";
-import SidebarButton from "../(_components)/sidebar-button.tsx";
+import SidebarButton from "./sidebar-button.tsx";
 import { useSignal } from "@preact/signals";
 import { useEffect } from "preact/hooks";
 import { SelectLocation } from "@/lib/db/schema/location.ts";
@@ -35,12 +35,7 @@ function Sidebar({ currentPath, sideBarItems }: SidebarProps) {
   useEffect(() => {
     if (sideBarItems) {
       sideBarLocations.value = sideBarItems;
-      mapPoints.value = sideBarLocations.value.map((item) => ({
-        id: item.id,
-        label: item.name,
-        lat: item.lat,
-        long: item.long,
-      }));
+      mapPoints.value = sideBarLocations.value;
     }
   }, [sideBarItems]);
 
@@ -99,9 +94,10 @@ function Sidebar({ currentPath, sideBarItems }: SidebarProps) {
               {sideBarLocations.value.map((item) => (
                 <SidebarButton
                   key={item.id}
+                  location={item}
                   label={item.name}
                   icon={<TbMapPinFilled size={24} />}
-                  href={item.slug}
+                  href="#"
                   currentPath={currentPath}
                   showLabel={isSidebarOpen.value}
                 />

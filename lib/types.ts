@@ -5,5 +5,6 @@ export interface LatLongItem {
 
 export interface MapPoint extends LatLongItem {
   id: number;
-  label: string;
+  name: string;
+  description: string | null;
 }

@@ -12,7 +12,7 @@ export default define.page(function App({ Component }) {
         />
         <title>fresh-test</title>
       </head>
-      <body f-client-nav>
+      <body id="root" f-client-nav>
         <Partial name="body">
           <Component />
         </Partial>
